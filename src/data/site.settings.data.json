@@ -1,0 +1,128 @@
+{
+  "general": {
+    "siteTitle": "Kaoverse",
+    "tagline": "Delightfully Unhinged.",
+    "copyrightStartYear": 2026,
+    "logoWidth": 125,
+    "branding": {
+      "logo": "",
+      "favicon": "/favicon.ico",
+      "backgroundImage": "/uploads/images/kaoverse.png",
+      "backgroundDisplay": {
+        "desktopSize": 355,
+        "desktopPositionX": "83%",
+        "desktopPositionY": "10px",
+        "mobileSize": 300,
+        "mobilePositionX": "50%",
+        "mobilePositionY": "-220px"
+      },
+      "titleImageLight": "/uploads/images/title-light.png",
+      "titleImageDark": "/uploads/images/title-dark.png"
+    },
+    "siteUrl": "https://kaoverse.com",
+    "privacyContactEmail": "",
+    "defaultDescription": "A universe of projects, ideas, discoveries, and creative chaos.",
+    "homeDescription": "A universe of projects, ideas, discoveries, and creative chaos.",
+    "aboutDescription": "A little about the mind behind Kaoverse.",
+    "vaultDescription": "",
+    "searchDescription": "Search Kaoverse for projects, ideas, and resources."
+  },
+  "navigation": {
+    "featuredCategories": [
+      "projects"
+    ],
+    "pages": [],
+    "categoryLabels": {
+      "projects": "PROJECTS"
+    }
+  },
+  "seo": {
+    "titleSeparator": " : ",
+    "titleSiteName": "Kaoverse",
+    "titlePosition": "after",
+    "homeTitleOnly": true
+  },
+  "social": {
+    "showSocialIcons": true,
+    "instagram": "https://kaoverse.com",
+    "pinterest": "https://kaoverse.com"
+  },
+  "blog": {
+    "postsPerPage": 10,
+    "excerptLength": 30,
+    "showDates": true,
+    "showExcerpts": true,
+    "showReadMore": true
+  },
+  "layout": {
+    "mantraLayout": {
+      "mantraHeight": 75,
+      "homeMantraHeight": 120,
+      "mantraTop": -48,
+      "homeMantraTop": -55,
+      "introHeight": 72
+    },
+    "showSidebar": true,
+    "sidebarPosition": "right",
+    "sidebarWidth": 280,
+    "contentMaxWidth": 1200
+  },
+  "sidebar": {
+    "topOffsetDesktop": 80,
+    "showSearch": true,
+    "quotes": {
+      "enabled": true,
+      "selections": [
+        {
+          "heading": "Quotes :",
+          "category": null
+        }
+      ]
+    },
+    "showRecentPosts": true,
+    "recentPostsCount": 8,
+    "showJournals": false
+  },
+  "featuredImages": {
+    "categoryFallbacks": {},
+    "forceCategoryImageInListings": []
+  },
+  "appearance": {
+    "defaultTheme": "light",
+    "light": {
+      "accentColor": "#008cce",
+      "backgroundColor": "#ffffff",
+      "textColor": "#000000",
+      "linkHoverColor": "#7f428d",
+      "linkColor": "#42758d"
+    },
+    "typography": {
+      "fontFamily": "-apple-system, BlinkMacSystemFont, \"Helvetica Neue\", Helvetica, sans-serif",
+      "fontSize": "14px",
+      "lineHeight": "1.8",
+      "navigation": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Helvetica Neue\", Helvetica, sans-serif",
+        "fontSize": "13px",
+        "fontWeight": "300",
+        "letterSpacing": "0.1em"
+      },
+      "siteTitle": {
+        "fontSize": "20px",
+        "fontWeight": "600",
+        "letterSpacing": "0.3em"
+      },
+      "tagline": {
+        "fontSize": "11px",
+        "fontWeight": "200",
+        "letterSpacing": "0.1em"
+      }
+    },
+    "dark": {
+      "accentColor": "#a9bccc",
+      "linkColor": "#9F88C8",
+      "linkHoverColor": "#6A43A3",
+      "backgroundColor": "#17191b",
+      "textColor": "#c9cbcd"
+    }
+  }
+}

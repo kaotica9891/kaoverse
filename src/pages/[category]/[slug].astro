@@ -1,0 +1,181 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+import { getAllUnifiedArticles } from '../../lib/articles';
+import { getCollection, render } from 'astro:content';
+import { getFeaturedImage } from '../../lib/featuredImages';
+
+const posts = import.meta.glob('../../content/posts/**/*.json', {
+  eager: true,
+  import: 'default',
+});
+
+export async function getStaticPaths() {
+  const posts = await getAllUnifiedArticles();
+
+  return posts.map((post) => ({
+    params: {
+      category: post.metadata.categorySlug,
+      slug: post.metadata.slug,
+    },
+    props: {
+      post,
+    },
+  }));
+}
+
+
+const { post } = Astro.props;
+const { metadata, html } = post;
+
+let MarkdownContent;
+
+if (post.source === 'markdown') {
+  const entries = await getCollection('markdown');
+  const entry = entries.find((item) => item.id === metadata.slug);
+
+  if (entry) {
+    const { Content } = await render(entry);
+    MarkdownContent = Content;
+  }
+}
+
+// Chronological post navigation
+
+const sortedPosts = (await getAllUnifiedArticles())
+  .sort((a, b) => a.metadata.date.localeCompare(b.metadata.date));
+
+const currentPostIndex = sortedPosts.findIndex(
+  (item) =>
+    item.metadata.slug === metadata.slug &&
+    item.metadata.categorySlug === metadata.categorySlug
+);
+
+const previousPost =
+  currentPostIndex > 0 ? sortedPosts[currentPostIndex - 1] : null;
+
+const nextPost =
+  currentPostIndex >= 0 && currentPostIndex < sortedPosts.length - 1
+    ? sortedPosts[currentPostIndex + 1]
+    : null;
+const openingMediaMatch = html.match(
+  /^\s*(?:(?:<!-- wp:media-text[^>]*-->\s*)?<div class="wp-block-media-text\b[\s\S]*?<\/figure>[\s\S]*?<\/div><\/div>|(?:<!-- wp:image[^>]*-->\s*)?<figure\b[^>]*class="[^"]*\bwp-block-image\b[^"]*"[^>]*>[\s\S]*?<\/figure>)/
+);
+const openingMedia = /weekly-prompts-\d+$/i.test(metadata.slug)
+  ? ''
+  : (openingMediaMatch?.[0] ?? '');
+const remainingHtml = openingMedia
+  ? html.slice(openingMedia.length)
+  : html;
+
+const markdownFeaturedImage =
+  post.source === 'markdown'
+    ? getFeaturedImage(post, { context: 'article' })
+    : null;
+
+const isWeeklyPrompt = /weekly-prompts-\d+$/i.test(metadata.slug);
+
+const cleanedHtml = remainingHtml.replace(
+  /(<center>\s*<div data-slideshow-id="(?:1490|1546)"><\/div>\s*<\/center>|<div data-slideshow-id="(?:1490|1546)"><\/div>)/g,
+  ''
+);
+---
+<BaseLayout
+  title={metadata.title}
+  description={metadata.description}
+>
+  <nav slot="page-intro" class="post-breadcrumbs" aria-label="Breadcrumb">
+    <a href="/">Home</a>
+    <a href={`/category/${metadata.categorySlug}/`}>
+      {metadata.categories?.find(
+        (category: { name: string; slug: string }) =>
+          category.slug === metadata.categorySlug
+      )?.name ?? metadata.categorySlug}
+    </a>
+  </nav>
+
+  <article class="blog-post">
+
+  <p class="post-modified">
+  Published: {metadata.date.split(' ')[0]}
+
+  {metadata.modified && metadata.showModifiedDate !== false && (
+    <>
+      <span class="date-separator"> ~ </span>
+      Updated: {metadata.modified.split(' ')[0]}
+    </>
+  )}
+</p>
+
+{openingMedia && (
+  <div class="post-opening-media">
+    <Fragment set:html={openingMedia} />
+  </div>
+)}
+
+{post.source === 'markdown' && markdownFeaturedImage && (
+  <div class="post-opening-media">
+    <img
+      src={markdownFeaturedImage}
+      alt={metadata.title}
+    />
+  </div>
+)}
+
+{metadata.showTitle !== false &&
+  !/weekly-prompts-\d+$/i.test(metadata.slug) && (
+    <h1 class="post-title">{metadata.title}</h1>
+)}
+
+
+<div class="post-content">
+  {post.source === 'markdown' ? (
+    MarkdownContent && (
+      <div class:list={['markdown-body', {
+        'skip-first-featured-image': metadata.featuredImageAuto === true
+      }]}>
+        <MarkdownContent />
+      </div>
+    )
+  ) : (
+    <Fragment set:html={cleanedHtml} />
+  )}
+</div>
+
+
+
+
+
+<div class="post-tags">
+  {metadata.tags.map((tag: { name: string; slug: string }) => (
+    <a href={`/tag/${tag.slug}/`}># {tag.name}</a>
+  ))}
+</div>
+
+<nav class="post-navigation" aria-label="Post navigation">
+  <div class="post-navigation-previous">
+    {previousPost && (
+      <a href={`/${previousPost.metadata.categorySlug}/${previousPost.metadata.slug}/`}>
+        ← Previous
+      </a>
+    )}
+  </div>
+
+  <a class="post-navigation-top" href="#top">
+    ↑ Back to Top
+  </a>
+
+
+  <div class="post-navigation-next">
+    {nextPost && (
+      <a href={`/${nextPost.metadata.categorySlug}/${nextPost.metadata.slug}/`}>
+        Next →
+      </a>
+    )}
+  </div>
+</nav>
+
+<RelatedPosts currentPost={post} />
+
+  </article>
+</BaseLayout>

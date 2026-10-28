@@ -1,0 +1,27 @@
+---
+import { getAllUnifiedArticles } from '../lib/articles';
+
+interface Props {
+  limit?: number;
+}
+
+const { limit = 5 } = Astro.props;
+
+const recentPosts = (await getAllUnifiedArticles())
+  .sort((a, b) => b.metadata.date.localeCompare(a.metadata.date))
+  .slice(0, limit);
+---
+
+<section class="recent-posts">
+  <h2>Recent Posts</h2>
+
+  <ul>
+    {recentPosts.map((post) => (
+      <li>
+        <a href={`/${post.metadata.categorySlug}/${post.metadata.slug}/`}>
+          {post.metadata.title}
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>

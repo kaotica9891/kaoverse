@@ -1,0 +1,154 @@
+---
+// This is where you force css changes to show
+import Header from '../components/Header.astro';
+import Sidebar from '../components/Sidebar.astro';
+import '../styles/style.css';
+import settings from '../data/site.settings.data.json';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  showSidebar?: boolean;
+}
+
+const {
+  title = settings.general.siteTitle,
+  description = settings.general.defaultDescription,
+  showSidebar = settings.layout.showSidebar,
+} = Astro.props;
+
+const canonicalUrl = new URL(
+  Astro.url.pathname,
+  settings.general.siteUrl
+).href;
+
+const seo = settings.seo;
+const light = settings.appearance.light;
+const dark = settings.appearance.dark;
+const defaultTheme = settings.appearance.defaultTheme;
+
+const pageTitle =
+  title === settings.general.siteTitle
+    ? (seo.homeTitleOnly ? '' : 'Home')
+    : title;
+
+const formattedTitle = pageTitle
+  ? seo.titlePosition === 'before'
+    ? `${seo.titleSiteName}${seo.titleSeparator}${pageTitle}`
+    : `${pageTitle}${seo.titleSeparator}${seo.titleSiteName}`
+  : seo.titleSiteName;
+
+const contentMaxWidth =
+  settings.layout.contentMaxWidth === 0
+    ? 'none'
+    : `${settings.layout.contentMaxWidth}px`;
+---
+
+
+<html
+  lang="en"
+  data-theme={defaultTheme}
+  style={`
+    --light-bg: ${light.backgroundColor};
+    --light-text: ${light.textColor};
+    --light-accent: ${light.accentColor};
+    --dark-bg: ${dark.backgroundColor};
+    --dark-text: ${dark.textColor};
+    --dark-accent: ${dark.accentColor};
+    
+    --light-link-color: ${light.linkColor};
+    --light-link-hover-color: ${light.linkHoverColor};
+    --dark-link-color: ${dark.linkColor};
+    --dark-link-hover-color: ${dark.linkHoverColor};
+    --sidebar-top-offset: ${settings.sidebar.topOffsetDesktop}px;
+  --background-desktop-size: ${settings.general.branding.backgroundDisplay.desktopSize}px;
+  --background-desktop-x: ${settings.general.branding.backgroundDisplay.desktopPositionX};
+  --background-desktop-y: ${settings.general.branding.backgroundDisplay.desktopPositionY};
+  --background-mobile-size: ${settings.general.branding.backgroundDisplay.mobileSize}px;
+  --background-mobile-x: ${settings.general.branding.backgroundDisplay.mobilePositionX};
+  --background-mobile-y: ${settings.general.branding.backgroundDisplay.mobilePositionY};
+  --mantra-height: ${settings.layout.mantraLayout.mantraHeight}px;
+  --home-mantra-height: ${settings.layout.mantraLayout.homeMantraHeight}px;
+  --mantra-top: ${settings.layout.mantraLayout.mantraTop}px;
+  --home-mantra-top: ${settings.layout.mantraLayout.homeMantraTop}px;
+  --intro-height: ${settings.layout.mantraLayout.introHeight}px;
+  --site-background-image: url('${settings.general.branding.backgroundImage}');
+
+    --site-font-family: ${settings.appearance.typography.fontFamily};
+    --site-font-size: ${settings.appearance.typography.fontSize};
+    --site-line-height: ${settings.appearance.typography.lineHeight};
+
+    --nav-font-family: ${settings.appearance.typography.navigation.fontFamily};
+    --nav-font-size: ${settings.appearance.typography.navigation.fontSize};
+    --nav-font-weight: ${settings.appearance.typography.navigation.fontWeight};
+    --nav-letter-spacing: ${settings.appearance.typography.navigation.letterSpacing};
+
+    --title-font-size: ${settings.appearance.typography.siteTitle.fontSize};
+    --title-font-weight: ${settings.appearance.typography.siteTitle.fontWeight};
+    --title-letter-spacing: ${settings.appearance.typography.siteTitle.letterSpacing};
+
+    --tagline-font-size: ${settings.appearance.typography.tagline.fontSize};
+    --tagline-font-weight: ${settings.appearance.typography.tagline.fontWeight};
+    --tagline-letter-spacing: ${settings.appearance.typography.tagline.letterSpacing};
+    --contentMaxWidth: ${contentMaxWidth};
+
+  `}
+>
+  <head>
+    <script is:inline>
+  (() => {
+    const savedTheme = localStorage.getItem("site-theme");
+
+    if (savedTheme === "light" || savedTheme === "dark") {
+      document.documentElement.dataset.theme = savedTheme;
+    }
+  })();
+</script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+   <title>{formattedTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+<link rel="icon" href={settings.general.branding.favicon} />
+</head>
+
+  <body>
+    <Header />
+
+    <div class:list={['page-layout', { 'no-sidebar': !showSidebar }]}>
+<main class:list={['page-main', { 'page-home': Astro.url.pathname === '/' }]}>
+  <div class="page-mantra" data-mantra></div>
+  <div class="page-intro">
+    <slot name="page-intro" />
+  </div>
+
+  <div class="page-body">
+    <slot />
+  </div>
+</main>
+  {showSidebar && <Sidebar />}
+</div>
+<Footer />
+  </body>
+</html>
+
+<script>
+  import mantras from '../data/mantras.txt?raw';
+
+  const entries = mantras
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  document.querySelectorAll<HTMLElement>('[data-mantra]').forEach((element) => {
+    if (entries.length === 0) {
+      element.hidden = true;
+      return;
+    }
+
+    element.textContent = entries[Math.floor(Math.random() * entries.length)]
+    .replace(/\\n/g, '\n');
+  });
+</script>
