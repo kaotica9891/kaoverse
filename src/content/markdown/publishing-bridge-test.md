@@ -5,9 +5,8 @@ category: "Projects"
 site-tags:
   - testing
 description: "Testing the Kaoverse publishing bridge."
+last-update: 2026.10.28
 ---
-
-# Publishing Bridge Test
 
 ![Norman Reviews the Incident Report](/uploads/images/Norman%20Reviews%20the%20Incident%20Report.png)
 
