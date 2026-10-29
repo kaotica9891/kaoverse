@@ -9,13 +9,13 @@ description: "Testing the Kaoverse publishing bridge."
 
 # Publishing Bridge Test
 
+![Norman Reviews the Incident Report](/uploads/images/Norman%20Reviews%20the%20Incident%20Report.png)
+
 If you're reading this on Kaoverse, Manuel's clipboard survived deployment.
 
 No chrome. No flamethrowers. Just a working publishing bridge.
 
 ## Incident Report #001
-
-![Norman Reviews the Incident Report](/uploads/images/Norman%20Reviews%20the%20Incident%20Report.png)
 
 Subject: Norman's Great Git Adventure
 Disposition: Resolved
