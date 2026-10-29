@@ -59,15 +59,25 @@ function registerImage(reference) {
   return imageFiles.get(filename);
 }
 
-// Convert Obsidian image embeds.
+// Convert Obsidian image embeds, preserving optional display dimensions.
 markdown = markdown.replace(
   /!\[\[([^\]]+)\]\]/g,
   (_, reference) => {
     const image = registerImage(reference);
-    const alt = path.parse(reference.split('|')[0].trim()).name
+    const parts = reference.split('|');
+    const alt = path.parse(parts[0].trim()).name
       .replace(/[-_]/g, ' ');
+    const size = (parts[1] ?? '').trim();
+    const dimensions = size.match(/^([1-9]\d*)(?:x([1-9]\d*))?$/);
 
-    return `![${alt}](${image.url})`;
+    if (!dimensions) return `![${alt}](${image.url})`;
+
+    const width = dimensions[1];
+    const height = dimensions[2] ? ` height="${dimensions[2]}"` : '';
+    const safeAlt = alt.replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+    return `<img src="${image.url}" alt="${safeAlt}" width="${width}"${height}>`;
   }
 );
 
@@ -75,7 +85,7 @@ markdown = markdown.replace(
 let featuredUrl = '';
 
 markdown = markdown.replace(
-  /^(featuredImage:\s*)(.+)$/m,
+  /^(featuredImage:[ \t]*)(.+)$/m,
   (_, prefix, value) => {
     const reference = value.trim().replace(/^["']|["']$/g, '');
     if (!reference) return `${prefix}${value}`;
