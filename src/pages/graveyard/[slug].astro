@@ -23,6 +23,12 @@ const title =
   frontmatter.match(/^title:\s*(.+)$/m)?.[1]?.replace(/^["']|["']$/g, '') ??
   'Untitled Preview';
 
+const publishedDate =
+  frontmatter.match(/^date:[ \t]*(.+)$/m)?.[1]
+    ?.trim()
+    .replace(/^["']|["']$/g, '')
+    .split(' ')[0] ?? '';
+
 const featuredImage =
   frontmatter.match(/^featuredImage:[ \t]*(.+)$/m)?.[1]
     ?.trim()
@@ -58,6 +64,9 @@ const previewFeaturedImage = featuredImage || firstImage;
     <a href={`/category/${categorySlug}/`}>{category}</a>
   </nav>
   <article class="blog-post">
+    {publishedDate && (
+      <p class="post-modified">Published: {publishedDate}</p>
+    )}
     {previewFeaturedImage && (
       <div class="post-opening-media">
         <img src={previewFeaturedImage} alt={title} />
