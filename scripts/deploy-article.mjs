@@ -49,6 +49,29 @@ function git(args) {
   return run("git", args);
 }
 
+function requireGitHubAccount() {
+  let active;
+
+  try {
+    active = run("gh", [
+      "api", "user", "--jq", ".login"
+    ]);
+  } catch {
+    throw new Error(
+      "KV Publish stopped. Could not verify the active GitHub account. " +
+      "No changes made."
+    );
+  }
+
+  if (active !== "kaotica9891") {
+    throw new Error(
+      `KV Publish stopped. Active GitHub account: ${active}. ` +
+      "Required account: kaotica9891. " +
+      "Switch accounts and try again. No changes made."
+    );
+  }
+}
+
 function remoteHead() {
   const output = git([
     "ls-remote", "origin", "refs/heads/main"
@@ -319,6 +342,7 @@ if (
 
 // READ-ONLY PREFLIGHT
 if (preflight) {
+  requireGitHubAccount();
   requireNote();
 
   const local = git(["rev-parse", "HEAD"]);
@@ -365,6 +389,7 @@ if (preflight) {
   let lockAcquired = false;
 
   try {
+    requireGitHubAccount();
     requireNote();
 
     fs.mkdirSync(lockDirectory);
