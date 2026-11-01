@@ -45,7 +45,7 @@ const morePages = (settings.navigation.pages as PageLink[])
 const barLinks: NavLink[] = [
   { label: 'HOME', url: '/' },
   ...featuredCategories.map((category) => ({
-    label: settings.navigation.categoryLabels[category.slug] || category.name,
+    label: settings.navigation.categoryLabels[category.slug as keyof typeof settings.navigation.categoryLabels] || category.name,
     url: `/category/${category.slug}/`
   })),
   ...barPages

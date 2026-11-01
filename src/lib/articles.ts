@@ -70,12 +70,13 @@ export function markdownToMetadata(data: Record<string, any>): ArticleMetadata {
     featuredImage: data.featuredImage
   ? String(data.featuredImage)
   : undefined,
-    categories: [
-      {
-        name: category,
-        slug: categorySlug,
-      },
-    ],
+    categories: [...new Set([
+  category,
+  ...(Array.isArray(data.categories) ? data.categories : []),
+].map((name) => String(name).trim()).filter(Boolean))].map((name) => ({
+  name,
+  slug: toSlug(name),
+})),
     tags: websiteTags.map((tag: string) => ({
       name: String(tag),
       slug: toSlug(String(tag)),
