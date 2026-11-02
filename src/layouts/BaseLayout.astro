@@ -19,8 +19,8 @@ const {
   description = settings.general.defaultDescription,
   showSidebar = settings.layout.showSidebar,
   favicon = import.meta.env.DEV
-  ? "/kv-favicon-local.ico"
-  : "/kv-favicon-live.ico",
+  ? settings.general.branding.faviconLocal
+  : settings.general.branding.faviconLive,
   appleTouchIcon,
 } = Astro.props;
 

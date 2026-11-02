@@ -6,7 +6,8 @@
     "logoWidth": 125,
     "branding": {
       "logo": "",
-      "favicon": "/favicon.ico",
+      "faviconLocal": "/kv-favicon-local.ico",
+      "faviconLive": "/kv-favicon-live.ico",
       "backgroundImage": "/uploads/images/kaoverse.png",
       "backgroundDisplay": {
         "desktopSize": 355,
