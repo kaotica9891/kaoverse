@@ -21,7 +21,9 @@ const {
   favicon = import.meta.env.DEV
   ? settings.general.branding.faviconLocal
   : settings.general.branding.faviconLive,
-  appleTouchIcon,
+  appleTouchIcon = import.meta.env.DEV
+  ? "/kv-local-apple-touch.png"
+  : "/kv-live-apple-touch.png",
 } = Astro.props;
 
 const canonicalUrl = new URL(
