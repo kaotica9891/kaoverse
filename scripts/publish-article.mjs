@@ -400,6 +400,7 @@ console.log(
   "PUBLISH_RESULT=" +
     JSON.stringify({
       sourceNote: articlePath,
+      articleTitle,
       trackedMarkdown,
       articleFile: path.relative(PROJECT_ROOT, outputFile),
       images: [...articleImages].map((filename) =>

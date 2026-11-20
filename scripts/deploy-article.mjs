@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
+import { logPublishing } from "./publishing-log.mjs";
 
 const ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -385,8 +386,13 @@ if (preflight) {
 } else {
   // LIVE DEPLOYMENT
   let pushAccepted = false;
+  let deploymentSucceeded = false;
   let conversionStarted = false;
   let lockAcquired = false;
+  let logSlug = "";
+let logImages = [];
+let logTitle = path.basename(articleName, ".md");
+
 
   try {
     requireGitHubAccount();
@@ -457,6 +463,10 @@ if (preflight) {
     );
 
     const filesToStage = verifyResult(result);
+    
+    logTitle = result.articleTitle;
+    logSlug = path.basename(result.articleFile, ".md");
+    logImages = result.images.map(image => path.basename(image));
 
     requireNote();
 
@@ -540,6 +550,7 @@ if (preflight) {
     );
 
     waitForDeployment(deployedCommit);
+    deploymentSucceeded = true;
 
     // UPDATE OBSIDIAN ONLY AFTER SUCCESSFUL DEPLOYMENT
     requireNote();
@@ -562,6 +573,19 @@ if (preflight) {
       fs.renameSync(sourceNote, destination);
     }
 
+    try {
+  logPublishing({
+    site: "KV",
+    process: mode === "publish" ? "Publish" : "Update",
+    title: logTitle,
+    slug: logSlug,
+    images: logImages,
+    result: "Success"
+  });
+} catch (error) {
+  console.warn(`Publishing log failed: ${error.message}`);
+}
+
     console.log(
       "GitHub Pages deployment succeeded. " +
       "Obsidian article updated."
@@ -569,6 +593,23 @@ if (preflight) {
 
   } catch (error) {
     console.error(error.message);
+
+    try {
+  logPublishing({
+    site: "KV",
+    process: mode === "publish" ? "Publish" : "Update",
+    title: logTitle,
+    slug: logSlug,
+    images: logImages,
+    result: deploymentSucceeded
+  ? `Deployed — Obsidian update failed: ${error.message}`
+  : pushAccepted
+    ? `Pushed — Deployment not confirmed: ${error.message}`
+    : `Failed: ${error.message}`
+  });
+} catch (logError) {
+  console.warn(`Publishing log failed: ${logError.message}`);
+}
 
     if (pushAccepted) {
       console.error(
